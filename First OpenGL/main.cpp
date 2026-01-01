@@ -11,8 +11,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void processInput(GLFWwindow* window);
 float mixValue = 0.2;
-float widthG = 600;
-float heightG = 600;
+float widthG = 2600;
+float heightG = 1500;
 
 int main()
 {
@@ -20,9 +20,9 @@ int main()
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	view = glm::translate(view, glm::vec3(3.0f, 6.0f, -3.0f));
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), widthG / heightG, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(60.0f), widthG / heightG, 1.0f, 100.0f);
 
 	glfwInit();
 	GLFWwindow* window = glfwCreateWindow(600, 600, "My first project", NULL, NULL);
@@ -72,6 +72,19 @@ int main()
    -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
 
 
+	};
+
+	glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 	// Масив який покладем в VBO який буде казать які вершини з нашого масиву малювати.
 	unsigned int indices[] = {
@@ -182,6 +195,7 @@ int main()
 	
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.2f, 0.9f, 0.4f, 1.0f);
 		/*float timeValue = glfwGetTime();
 		float greenValue = sin(timeValue) / 2 + 0.5f;
 		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
@@ -190,11 +204,7 @@ int main()
 			return -1;
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
-		model = glm::rotate(model, (float)glfwGetTime()/1000 * glm::radians(55.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-		shader.setMatrix4("model", model);
 		shader.setFloat("mixValue", mixValue);
-		glClearColor(0.2f, 0.9f, 0.4f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -202,7 +212,16 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
+		for (int i = 0; i < 10; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * 10;
+			model = glm::rotate(model, angle * (float)glfwGetTime()/100.0f, glm::vec3(1.0f, 0.3f, 0.5f));
+			shader.setMatrix4("model", model);
+			
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
+
+		}
 		//glDrawArrays(GL_TRIANGLES, 0, 36); // 1 - що малювати, 2 - початковий індекс в Vertex Array, 3 - кількість вершин
 		//glBindVertexArray(0); // скидаємо нащ VAO
 		processInput(window);
@@ -216,8 +235,8 @@ int main()
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
-	widthG = width;
-	heightG = height;
+	/*widthG = width;
+	heightG = height;*/
 }
 
 void processInput(GLFWwindow* window) {
