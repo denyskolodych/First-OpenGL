@@ -13,16 +13,23 @@ void processInput(GLFWwindow* window);
 float mixValue = 0.2;
 float widthG = 2600;
 float heightG = 1500;
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
 
 int main()
 {
 	// Creating Matrix model, view, projection
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(3.0f, 6.0f, -3.0f));
+
+	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // камеру ми рухаємо назад по осі Z на 3 одиниці
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(60.0f), widthG / heightG, 1.0f, 100.0f);
+	projection = glm::perspective(glm::radians(60.0f), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
 
 	glfwInit();
 	GLFWwindow* window = glfwCreateWindow(600, 600, "My first project", NULL, NULL);
@@ -190,7 +197,6 @@ int main()
 	shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);
 	shader.setMatrix4("model", model);
-	shader.setMatrix4("view", view);
 	shader.setMatrix4("projection", projection);
 	
 	while (!glfwWindowShouldClose(window)) {
@@ -204,6 +210,9 @@ int main()
 			return -1;
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		shader.setMatrix4("view", view);
 		shader.setFloat("mixValue", mixValue);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -227,6 +236,10 @@ int main()
 		processInput(window);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 	}
 	glfwTerminate();
 
@@ -243,6 +256,7 @@ void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		if (mixValue < 1) {
 			mixValue += 0.01;
@@ -252,5 +266,21 @@ void processInput(GLFWwindow* window) {
 		if (mixValue > 0) {
 			mixValue -= 0.01;
 		}
+	}
+
+	const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		cameraPos += cameraSpeed * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		cameraPos -= cameraSpeed * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		cameraPos -= glm::cross(cameraFront, cameraUp) * cameraSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		cameraPos += glm::cross(cameraFront, cameraUp) * cameraSpeed;
+		std::cout << deltaTime << std::endl;
+
 	}
 }
