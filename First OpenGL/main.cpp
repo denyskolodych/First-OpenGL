@@ -9,6 +9,8 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
+void mouse_callack(GLFWwindow* window, double xpos, double ypos);
+
 void processInput(GLFWwindow* window);
 float mixValue = 0.2;
 float widthG = 2600;
@@ -19,6 +21,12 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+float lastX = 300.0f;
+float lastY = 300.0f;
+
+float yaw =  -90.0f;
+float pitch = 0.0f;
 
 
 int main()
@@ -45,6 +53,8 @@ int main()
 	}
 	glViewport(0, 0, 600, 600);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callack);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	float vertices1[] = {
     // positions // texture coordts
@@ -282,5 +292,34 @@ void processInput(GLFWwindow* window) {
 		cameraPos += glm::cross(cameraFront, cameraUp) * cameraSpeed;
 		std::cout << deltaTime << std::endl;
 
+	}
+}
+
+void mouse_callack(GLFWwindow* window, double xpos, double ypos) {
+	{
+		float xoffset = xpos - lastX;
+		float yoffset = -ypos + lastY;
+		lastX = xpos;
+		lastY = ypos;
+
+		float sensivity = 0.1f;
+		xoffset *= sensivity;
+		yoffset *= sensivity;
+
+		yaw += xoffset;
+		pitch += yoffset;
+
+		if (pitch > 89.0f) {
+			pitch = 89.0f;
+		}
+		if (pitch < -89.0f) {
+			pitch = -89.0f;
+		}
+
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		direction.y = sin(glm::radians(pitch));
+		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		cameraFront = glm::normalize(direction);
 	}
 }
