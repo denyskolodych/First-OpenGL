@@ -11,6 +11,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void mouse_callack(GLFWwindow* window, double xpos, double ypos);
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 void processInput(GLFWwindow* window);
 float mixValue = 0.2;
 float widthG = 2600;
@@ -28,6 +30,8 @@ float lastY = 300.0f;
 float yaw =  -90.0f;
 float pitch = 0.0f;
 
+float fov = 45.0f;
+
 
 int main()
 {
@@ -36,8 +40,8 @@ int main()
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // камеру ми рухаємо назад по осі Z на 3 одиниці
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(60.0f), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
+	//glm::mat4 projection;
+	//projection = glm::perspective(glm::radians(fov), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
 
 	glfwInit();
 	GLFWwindow* window = glfwCreateWindow(600, 600, "My first project", NULL, NULL);
@@ -55,6 +59,8 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callack);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetScrollCallback(window, scroll_callback);
+
 
 	float vertices1[] = {
     // positions // texture coordts
@@ -207,7 +213,6 @@ int main()
 	shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);
 	shader.setMatrix4("model", model);
-	shader.setMatrix4("projection", projection);
 	
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -223,6 +228,9 @@ int main()
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		shader.setMatrix4("view", view);
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(fov), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
+		shader.setMatrix4("projection", projection);
 		shader.setFloat("mixValue", mixValue);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -290,7 +298,6 @@ void processInput(GLFWwindow* window) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		cameraPos += glm::cross(cameraFront, cameraUp) * cameraSpeed;
-		std::cout << deltaTime << std::endl;
 
 	}
 }
@@ -321,5 +328,15 @@ void mouse_callack(GLFWwindow* window, double xpos, double ypos) {
 		direction.y = sin(glm::radians(pitch));
 		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		cameraFront = glm::normalize(direction);
+	}
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) { // коли крутим колесо мишки yoffset буде додатнім(1) чи відємним(-1) в залежності від напрямку прокрутки
+	fov -= (float)yoffset;
+	if (fov < 1.0f) {
+		fov = 1.0f;
+	}
+	if (fov > 45.0f) {
+		fov = 45.0f;
 	}
 }
