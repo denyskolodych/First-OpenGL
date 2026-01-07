@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include "shader.h"
+#include "camera.h"
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
 #include <glm/glm.hpp>
@@ -9,29 +10,21 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-void mouse_callack(GLFWwindow* window, double xpos, double ypos);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 void processInput(GLFWwindow* window);
 float mixValue = 0.2;
-float widthG = 2600;
-float heightG = 1500;
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+float widthG = 600;
+float heightG = 600;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = 300.0f;
 float lastY = 300.0f;
-
-float yaw =  -90.0f;
-float pitch = 0.0f;
-
-float fov = 45.0f;
-
 
 int main()
 {
@@ -57,7 +50,7 @@ int main()
 	}
 	glViewport(0, 0, 600, 600);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_callack);
+	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetScrollCallback(window, scroll_callback);
 
@@ -225,11 +218,10 @@ int main()
 			return -1;
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", view);
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(fov), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
+		projection = glm::perspective(glm::radians(camera.Zoom), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
 		shader.setMatrix4("projection", projection);
 		shader.setFloat("mixValue", mixValue);
 
@@ -285,58 +277,29 @@ void processInput(GLFWwindow* window) {
 			mixValue -= 0.01;
 		}
 	}
-
-	const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		cameraPos += cameraSpeed * cameraFront;
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		cameraPos -= cameraSpeed * cameraFront;
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		cameraPos -= glm::cross(cameraFront, cameraUp) * cameraSpeed;
+		camera.ProcessKeyboard(LEFT, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		cameraPos += glm::cross(cameraFront, cameraUp) * cameraSpeed;
-
-	}
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+    }
 }
 
-void mouse_callack(GLFWwindow* window, double xpos, double ypos) {
-	{
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 		float xoffset = xpos - lastX;
 		float yoffset = -ypos + lastY;
 		lastX = xpos;
 		lastY = ypos;
 
-		float sensivity = 0.1f;
-		xoffset *= sensivity;
-		yoffset *= sensivity;
-
-		yaw += xoffset;
-		pitch += yoffset;
-
-		if (pitch > 89.0f) {
-			pitch = 89.0f;
-		}
-		if (pitch < -89.0f) {
-			pitch = -89.0f;
-		}
-
-		glm::vec3 direction;
-		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		direction.y = sin(glm::radians(pitch));
-		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-		cameraFront = glm::normalize(direction);
-	}
+		camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) { // коли крутим колесо мишки yoffset буде додатнім(1) чи відємним(-1) в залежності від напрямку прокрутки
-	fov -= (float)yoffset;
-	if (fov < 1.0f) {
-		fov = 1.0f;
-	}
-	if (fov > 45.0f) {
-		fov = 45.0f;
-	}
+	camera.ProcessMouseScroll(yoffset);
 }
