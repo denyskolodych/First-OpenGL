@@ -7,6 +7,7 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -25,6 +26,8 @@ float lastFrame = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = 300.0f;
 float lastY = 300.0f;
+
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -57,51 +60,51 @@ int main()
 
 	float vertices1[] = {
     // positions // texture coordts
-	0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 
-   -0.5f, -0.5f, 1.0f, 0.0f, 1.0f,
-   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+	0.5f, -0.5f, 1.0f,
+	0.5f, -0.5f, 0.0f,
+   -0.5f, -0.5f, 1.0f,
+   -0.5f, -0.5f, 0.0f,
 
-	0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-	0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-   -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-   -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,
+	0.5f,  0.5f, 1.0f,
+	0.5f,  0.5f, 0.0f,
+   -0.5f,  0.5f, 1.0f,
+   -0.5f,  0.5f, 0.0f,
 
-   -0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-   -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-   -0.5f, -0.5f, 1.0f, 0.0f, 1.0f,
-   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+   -0.5f,  0.5f, 1.0f,
+   -0.5f,  0.5f, 0.0f,
+   -0.5f, -0.5f, 1.0f,
+   -0.5f, -0.5f, 0.0f,
 
-    0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-    0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-    0.5f, -0.5f, 1.0f, 0.0f, 1.0f,
-    0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+    0.5f,  0.5f, 1.0f,
+    0.5f,  0.5f, 0.0f, 
+    0.5f, -0.5f, 1.0f,
+    0.5f, -0.5f, 0.0f,
 
-    0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-	0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-   -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+    0.5f,  0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f,
+   -0.5f, -0.5f, 0.0f,
+   -0.5f,  0.5f, 0.0f,
 
-	0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-	0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-   -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-   -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
+	0.5f,  0.5f, 1.0f,
+	0.5f, -0.5f, 1.0f,
+   -0.5f, -0.5f, 1.0f,
+   -0.5f,  0.5f, 1.0f
 
 
 	};
 
-	glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	//glm::vec3 cubePositions[] = {
+	//glm::vec3(0.0f,  0.0f,  0.0f),
+	//glm::vec3(2.0f,  5.0f, -15.0f),
+	//glm::vec3(-1.5f, -2.2f, -2.5f),
+	//glm::vec3(-3.8f, -2.0f, -12.3f),
+	//glm::vec3(2.4f, -0.4f, -3.5f),
+	//glm::vec3(-1.7f,  3.0f, -7.5f),
+	//glm::vec3(1.3f, -2.0f, -2.5f),
+	//glm::vec3(1.5f,  2.0f, -2.5f),
+	//glm::vec3(1.5f,  0.2f, -1.5f),
+	//glm::vec3(-1.3f,  1.0f, -1.5f)
+	//};
 	// Масив який покладем в VBO який буде казать які вершини з нашого масиву малювати.
 	unsigned int indices[] = {
 		0, 1, 2, // Перший трикутник
@@ -124,48 +127,50 @@ int main()
 
 
 	};
-	unsigned int texture1;
-	unsigned int texture2;
-	glGenTextures(1, &texture1);
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load a texture! " << std::endl;
-	}
-	stbi_image_free(data);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = NULL;
-	stbi_set_flip_vertically_on_load(true);
-	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+	//unsigned int texture1;
+	//unsigned int texture2;
+	//glGenTextures(1, &texture1);
+	//glGenTextures(1, &texture2);
+	//glBindTexture(GL_TEXTURE_2D, texture1);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//int width, height, nrChannels;
+	//unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+	//if (data) {
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	//	glGenerateMipmap(GL_TEXTURE_2D);
+	//}
+	//else {
+	//	std::cout << "Failed to load a texture! " << std::endl;
+	//}
+	//stbi_image_free(data);
+	//glBindTexture(GL_TEXTURE_2D, texture2);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//data = NULL;
+	//stbi_set_flip_vertically_on_load(true);
+	//data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
+	//if (data) {
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	//	glGenerateMipmap(GL_TEXTURE_2D);
 
-	}
-	else {
-		std::cout << "Failed to load a texture! " << std::endl;
-	}
-	stbi_image_free(data);
+	//}
+	//else {
+	//	std::cout << "Failed to load a texture! " << std::endl;
+	//}
+	//stbi_image_free(data);
 	unsigned int VBO; // Vertex Buffer Object - буфер у памяті відеокарти, після створення буфера змінна буде зберігати ID того буфера
 	unsigned int VAO;
 	unsigned int EBO; // Element Buffer Object - вирішує проблему дублювання вершин щоб не писати одну ту саму вершину два рази
+	unsigned int lightVAO;
 	// Генерація всіх буферів
 	glGenBuffers(1, &EBO);
 	glGenVertexArrays(1, &VAO);
+	glGenVertexArrays(1, &lightVAO);
 	glGenBuffers(1, &VBO); // Функція яка створює один буфер в памяті відеокарти та призначає ID того буфера змінній VBO
 
 	glBindVertexArray(VAO);
@@ -176,14 +181,20 @@ int main()
 	// GL_DYNAMIC_DRAW - якщо дані будуть змінюватися та будуть часто використовуватися
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	/*glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));*/
 	// Кажемо як інтерпретувати наші дані в VBO. Перший аргумент location де він буде розташовуватися. Оскільки в шейдері я беру дані з location 0  то наші вершини повинні знаходитися на location 0
 	// Другий аргумент це кількість компонентів на атрибут 3(x,y,z). 3 - тій це тип даних кожного компонента. 4 чи нормалізувати компонети(-1, 1). 5 - скільки байтів займає один атрибут. 6 - з якого індексу починаються атрибути
 	glEnableVertexAttribArray(0); // дозволяє брати дані з location 0
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glBindVertexArray(0);
+	/*glEnableVertexAttribArray(1);*/
+	/*glEnableVertexAttribArray(2);*/
+    glBindVertexArray(0);
+
+	glBindVertexArray(lightVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 
 
@@ -193,6 +204,7 @@ int main()
 
 
 	Shader shader("vShader.vs", "fShader.fs");
+	Shader shaderLight("vShaderLight.vs", "fShaderLight.fs");
 	glEnable(GL_DEPTH_TEST);
 	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	//// Кажемо як інтерпретувати наші дані в VBO. Перший аргумент location де він буде розташовуватися. Оскільки в шейдері я беру дані з location 0  то наші вершини повинні знаходитися на location 0
@@ -201,15 +213,13 @@ int main()
 	//glEnableVertexAttribArray(1); // дозволяє брати дані з location 0
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // щоб малювати в режимі каркасу тобто лініями і не заповнювати середину
-	shader.use();
 
-	shader.setInt("texture1", 0);
-	shader.setInt("texture2", 1);
-	shader.setMatrix4("model", model);
+	/*shader.setInt("texture1", 0);
+	shader.setInt("texture2", 1);*/
 	
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.2f, 0.9f, 0.4f, 1.0f);
+		glClearColor(0.0, 0.0f, 0.0f, 1.0f);
 		/*float timeValue = glfwGetTime();
 		float greenValue = sin(timeValue) / 2 + 0.5f;
 		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
@@ -218,29 +228,39 @@ int main()
 			return -1;
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
+		shader.use();
+		shader.setMatrix4("model", model);
+		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", view);
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(camera.Zoom), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.0f));
+		shader.setMatrix4("model", model);
 		shader.setMatrix4("projection", projection);
 		shader.setFloat("mixValue", mixValue);
 
-		glActiveTexture(GL_TEXTURE0);
+		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		glBindTexture(GL_TEXTURE_2D, texture2);*/
 
 		glBindVertexArray(VAO);
-		for (int i = 0; i < 10; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * 10;
-			model = glm::rotate(model, angle * (float)glfwGetTime()/100.0f, glm::vec3(1.0f, 0.3f, 0.5f));
-			shader.setMatrix4("model", model);
-			
-			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
+		
+	    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
 
-		}
+		shaderLight.use();
+		shaderLight.setMatrix4("view", view);
+		shaderLight.setMatrix4("projection", projection);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f)); // робимо кубик меншим
+		shaderLight.setMatrix4("model", model);
+		glBindVertexArray(0);
+		glBindVertexArray(lightVAO);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		//glDrawArrays(GL_TRIANGLES, 0, 36); // 1 - що малювати, 2 - початковий індекс в Vertex Array, 3 - кількість вершин
 		//glBindVertexArray(0); // скидаємо нащ VAO
 		processInput(window);

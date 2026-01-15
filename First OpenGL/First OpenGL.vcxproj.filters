@@ -45,6 +45,8 @@
   <ItemGroup>
     <None Include="vShader.vs" />
     <None Include="fShader.fs" />
+    <None Include="vShaderLight.vs" />
+    <None Include="fShaderLight.fs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="awesomeface.png">
