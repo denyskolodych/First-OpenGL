@@ -12,6 +12,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 	xoffset *= MouseSensitivity;
 	yoffset *= MouseSensitivity;
 
+
 	Yaw += xoffset; // дивитися вбоки
 	Pitch += yoffset; // дивитися вгору вниз
 	if (constrainPitch) {

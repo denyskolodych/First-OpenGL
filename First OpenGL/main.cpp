@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <cmath>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -23,17 +24,18 @@ float heightG = 600;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
 float lastX = 300.0f;
 float lastY = 300.0f;
 
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(3.0f, 0.0f, 2.0f);
+static glm::vec3 basePos = lightPos;
 
 int main()
 {
 	// Creating Matrix model, view, projection
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // камеру ми рухаємо назад по осі Z на 3 одиниці
 	//glm::mat4 projection;
@@ -58,40 +60,41 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 
 
-	float vertices1[] = {
-    // positions // texture coordts
-	0.5f, -0.5f, 1.0f,
-	0.5f, -0.5f, 0.0f,
-   -0.5f, -0.5f, 1.0f,
-   -0.5f, -0.5f, 0.0f,
+	float vertices[] = {
+		// positions 
+		0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f, 0.0f, 0.0f, -1.0f,  0.0f,
+	   -0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,
+	   -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,  0.0f,
 
-	0.5f,  0.5f, 1.0f,
-	0.5f,  0.5f, 0.0f,
-   -0.5f,  0.5f, 1.0f,
-   -0.5f,  0.5f, 0.0f,
+		0.5f,  0.5f, 1.0f,  0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f, 0.0f,  0.0f,  0.0f,  1.0f,
+	   -0.5f,  0.5f, 1.0f,  0.0f,  0.0f,  1.0f,
+	   -0.5f,  0.5f, 0.0f,  0.0f,  0.0f,  1.0f,
 
-   -0.5f,  0.5f, 1.0f,
-   -0.5f,  0.5f, 0.0f,
-   -0.5f, -0.5f, 1.0f,
-   -0.5f, -0.5f, 0.0f,
+	   -0.5f,  0.5f, 1.0f, -1.0f,  0.0f,  0.0f,
+	   -0.5f,  0.5f, 0.0f, -1.0f,  0.0f,  0.0f,
+	   -0.5f, -0.5f, 1.0f, -1.0f,  0.0f,  0.0f,
+	   -0.5f, -0.5f, 0.0f, -1.0f,  0.0f,  0.0f,
 
-    0.5f,  0.5f, 1.0f,
-    0.5f,  0.5f, 0.0f, 
-    0.5f, -0.5f, 1.0f,
-    0.5f, -0.5f, 0.0f,
+		0.5f,  0.5f, 1.0f, 1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, 0.0f, 1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, 1.0f, 1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, 0.0f, 1.0f,  0.0f,  0.0f,
 
-    0.5f,  0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-   -0.5f, -0.5f, 0.0f,
-   -0.5f,  0.5f, 0.0f,
+		0.5f,  0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
+		0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
+	   -0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
+	   -0.5f,  0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
 
-	0.5f,  0.5f, 1.0f,
-	0.5f, -0.5f, 1.0f,
-   -0.5f, -0.5f, 1.0f,
-   -0.5f,  0.5f, 1.0f
+		0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,
+		0.5f, -0.5f, 1.0f, 0.0f,  0.0f,  1.0f,
+	   -0.5f, -0.5f, 1.0f, 0.0f,  0.0f,  1.0f,
+	   -0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f
 
 
 	};
+	
 
 	//glm::vec3 cubePositions[] = {
 	//glm::vec3(0.0f,  0.0f,  0.0f),
@@ -176,24 +179,24 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); // Тепер GL_ARRAY_BUFFER є VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW); // Надсилає дані в памяті відеокарти і ми кажемо що вони не будуть змінюватися але будувать часто використовуватися
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Надсилає дані в памяті відеокарти і ми кажемо що вони не будуть змінюватися але будувать часто використовуватися
 	// GL_STREAM_DRAW - якщо дані не будуть змінюватися та будуть використовуватися кілька разів
 	// GL_DYNAMIC_DRAW - якщо дані будуть змінюватися та будуть часто використовуватися
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	/*glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));*/
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	// Кажемо як інтерпретувати наші дані в VBO. Перший аргумент location де він буде розташовуватися. Оскільки в шейдері я беру дані з location 0  то наші вершини повинні знаходитися на location 0
 	// Другий аргумент це кількість компонентів на атрибут 3(x,y,z). 3 - тій це тип даних кожного компонента. 4 чи нормалізувати компонети(-1, 1). 5 - скільки байтів займає один атрибут. 6 - з якого індексу починаються атрибути
 	glEnableVertexAttribArray(0); // дозволяє брати дані з location 0
-	/*glEnableVertexAttribArray(1);*/
+	glEnableVertexAttribArray(1);
 	/*glEnableVertexAttribArray(2);*/
     glBindVertexArray(0);
 
 	glBindVertexArray(lightVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 
@@ -212,7 +215,7 @@ int main()
 	//glEnableVertexAttribArray(0); // дозволяє брати дані з location 0
 	//glEnableVertexAttribArray(1); // дозволяє брати дані з location 0
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // щоб малювати в режимі каркасу тобто лініями і не заповнювати середину
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // щоб малювати в режимі каркасу тобто лініями і не заповнювати серединуs
 
 	/*shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);*/
@@ -229,6 +232,13 @@ int main()
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
 		shader.use();
+		//float PI2 = (float)glm::radians(360.0f);
+		float angle = 0.0f;/*fmodf((float)glfwGetTime(), PI2);
+		std::cout << angle << std::endl;*/
+		glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		lightPos = Rotate * glm::vec4(basePos, 1.0f);
+		shader.setVec3("lightPos", camera.GetViewMatrix() * glm::vec4(lightPos, 1.0f));
+		shader.setVec3("viewPos", camera.Position);
 		shader.setMatrix4("model", model);
 		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
@@ -237,7 +247,6 @@ int main()
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(camera.Zoom), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(1.0f));
 		shader.setMatrix4("model", model);
 		shader.setMatrix4("projection", projection);
 		shader.setFloat("mixValue", mixValue);
@@ -256,7 +265,7 @@ int main()
 		shaderLight.setMatrix4("projection", projection);
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // робимо кубик меншим
+		//model = glm::scale(model, glm::vec3(0.2f)); // робимо кубик меншим
 		shaderLight.setMatrix4("model", model);
 		glBindVertexArray(0);
 		glBindVertexArray(lightVAO);
@@ -310,8 +319,16 @@ void processInput(GLFWwindow* window) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
     }
 }
-
+bool firstMouse = true;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+		return;
+	}
 		float xoffset = xpos - lastX;
 		float yoffset = -ypos + lastY;
 		lastX = xpos;
