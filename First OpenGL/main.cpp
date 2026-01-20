@@ -232,9 +232,8 @@ int main()
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
 		shader.use();
-		//float PI2 = (float)glm::radians(360.0f);
-		float angle = 0.0f;/*fmodf((float)glfwGetTime(), PI2);
-		std::cout << angle << std::endl;*/
+		float PI2 = (float)glm::radians(360.0f);
+		float angle = fmodf((float)glfwGetTime(), PI2);
 		glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 		lightPos = Rotate * glm::vec4(basePos, 1.0f);
 		shader.setVec3("lightPos", glm::vec4(lightPos, 1.0f));
