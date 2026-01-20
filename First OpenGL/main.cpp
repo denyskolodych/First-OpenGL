@@ -237,7 +237,7 @@ int main()
 		std::cout << angle << std::endl;*/
 		glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 		lightPos = Rotate * glm::vec4(basePos, 1.0f);
-		shader.setVec3("lightPos", camera.GetViewMatrix() * glm::vec4(lightPos, 1.0f));
+		shader.setVec3("lightPos", glm::vec4(lightPos, 1.0f));
 		shader.setVec3("viewPos", camera.Position);
 		shader.setMatrix4("model", model);
 		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
