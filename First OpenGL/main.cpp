@@ -10,6 +10,7 @@
 #include <iostream>
 #include <cmath>
 
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -18,8 +19,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 void processInput(GLFWwindow* window);
 float mixValue = 0.2;
-float widthG = 600;
-float heightG = 600;
+float widthG = 2560 / 4;
+float heightG = 1440 / 4;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -42,7 +43,7 @@ int main()
 	//projection = glm::perspective(glm::radians(fov), widthG / heightG, 1.0f, 100.0f); // 1 - кут огляду, 2 - співвідношення сторін, 3 - ближня відмітка, 4 - дальня відмітка
 
 	glfwInit();
-	GLFWwindow* window = glfwCreateWindow(600, 600, "My first project", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(widthG, heightG, "My first project", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Error creating the window" << std::endl;
 		glfwTerminate();
@@ -53,7 +54,7 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	glViewport(0, 0, 600, 600);
+	glViewport(0, 0, widthG, heightG);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -236,11 +237,20 @@ int main()
 		float angle = fmodf((float)glfwGetTime(), PI2);
 		glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 		lightPos = Rotate * glm::vec4(basePos, 1.0f);
-		shader.setVec3("lightPos", glm::vec4(lightPos, 1.0f));
+
+
 		shader.setVec3("viewPos", camera.Position);
 		shader.setMatrix4("model", model);
-		shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		// Встановлення матеріалу
+		shader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		shader.setFloat("material.shininess", 32.0f);
+		// Встановлення світла
+		shader.setVec3("light.position", lightPos);
+		shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+		shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", view);
 		glm::mat4 projection;
@@ -286,8 +296,8 @@ int main()
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
-	/*widthG = width;
-	heightG = height;*/
+	widthG = width;
+	heightG = height;
 }
 
 void processInput(GLFWwindow* window) {
