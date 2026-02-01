@@ -131,9 +131,11 @@ int main()
 
 	};
 	unsigned int texture1;
-	//unsigned int texture2;
+	unsigned int texture2;
+	unsigned int texture3;
 	glGenTextures(1, &texture1);
-	//glGenTextures(1, &texture2);
+	glGenTextures(1, &texture2);
+	glGenTextures(1, &texture3);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -149,23 +151,39 @@ int main()
 		std::cout << "Failed to load a texture! " << std::endl;
 	}
 	stbi_image_free(data);
-	//glBindTexture(GL_TEXTURE_2D, texture2);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//data = NULL;
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	data = NULL;
 	//stbi_set_flip_vertically_on_load(true);
-	//data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
-	//if (data) {
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	//	glGenerateMipmap(GL_TEXTURE_2D);
+	data = stbi_load("C:/Users/denis/Downloads/lighting_maps_specular_color.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
-	//}
-	//else {
-	//	std::cout << "Failed to load a texture! " << std::endl;
-	//}
-	//stbi_image_free(data);
+	}
+	else {
+		std::cout << "Failed to load a texture! " << std::endl;
+	}
+	stbi_image_free(data);
+
+	glBindTexture(GL_TEXTURE_2D, texture3);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	data = NULL;
+	data = stbi_load("C:/Users/denis/Downloads/matrix.jpg", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load a texture! " << std::endl;
+	}
+	stbi_image_free(data);
 	unsigned int VBO; // Vertex Buffer Object - буфер у памяті відеокарти, після створення буфера змінна буде зберігати ID того буфера
 	unsigned int VAO;
 	unsigned int EBO; // Element Buffer Object - вирішує проблему дублювання вершин щоб не писати одну ту саму вершину два рази
@@ -233,18 +251,19 @@ int main()
 		}
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
 		shader.use();
-		float PI2 = (float)glm::radians(360.0f);
+	/*	float PI2 = (float)glm::radians(360.0f);
 		float angle = fmodf((float)glfwGetTime(), PI2);
 		glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
-		lightPos = Rotate * glm::vec4(basePos, 1.0f);
+		lightPos = Rotate * glm::vec4(basePos, 1.0f);*/
 
 
 		shader.setVec3("viewPos", camera.Position);
 		shader.setMatrix4("model", model);
 		// Встановлення матеріалу
-		shader.setVec3("material.specular", 0.7f, 0.6f, 0.6f);
+		shader.setInt("material.specular", 1);
 		shader.setFloat("material.shininess", 32.0f);
 		shader.setInt("material.diffuse", 0);
+		shader.setInt("material.emission", 2);
 		// Встановлення світла
 		glm::vec3 lightColor = glm::vec3(1,1,1);
 		shader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
@@ -268,6 +287,10 @@ int main()
 		glBindVertexArray(VAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		glActiveTexture(GL_TEXTURE0 + 2);
+		glBindTexture(GL_TEXTURE_2D, texture3);
 	    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
 
 		shaderLight.use();
