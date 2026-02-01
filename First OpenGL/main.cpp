@@ -19,8 +19,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 void processInput(GLFWwindow* window);
 float mixValue = 0.2;
-float widthG = 2560 / 4;
-float heightG = 1440 / 4;
+float widthG = 2560;
+float heightG = 1440 ;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -60,38 +60,37 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetScrollCallback(window, scroll_callback);
 
-
 	float vertices[] = {
-		// positions 
-		0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f, 0.0f, 0.0f, -1.0f,  0.0f,
-	   -0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,
-	   -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,  0.0f,
+		// positions       // Normals         
+		0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+	   -0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+	   -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
 
-		0.5f,  0.5f, 1.0f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f, 0.0f,  0.0f,  0.0f,  1.0f,
-	   -0.5f,  0.5f, 1.0f,  0.0f,  0.0f,  1.0f,
-	   -0.5f,  0.5f, 0.0f,  0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f, 1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
+		0.5f,  0.5f, 0.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
+	   -0.5f,  0.5f, 1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
+	   -0.5f,  0.5f, 0.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
 
-	   -0.5f,  0.5f, 1.0f, -1.0f,  0.0f,  0.0f,
-	   -0.5f,  0.5f, 0.0f, -1.0f,  0.0f,  0.0f,
-	   -0.5f, -0.5f, 1.0f, -1.0f,  0.0f,  0.0f,
-	   -0.5f, -0.5f, 0.0f, -1.0f,  0.0f,  0.0f,
+	   -0.5f,  0.5f, 1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+	   -0.5f,  0.5f, 0.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+	   -0.5f, -0.5f, 1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	   -0.5f, -0.5f, 0.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
 
-		0.5f,  0.5f, 1.0f, 1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f, 0.0f, 1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, 1.0f, 1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, 0.0f, 1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, 1.0f, 1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+		0.5f,  0.5f, 0.0f, 1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
 
-		0.5f,  0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
-		0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
-	   -0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
-	   -0.5f,  0.5f, 0.0f, 0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, 0.0f, 0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+	   -0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+	   -0.5f,  0.5f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
 
-		0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f, 1.0f, 0.0f,  0.0f,  1.0f,
-	   -0.5f, -0.5f, 1.0f, 0.0f,  0.0f,  1.0f,
-	   -0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f
+		0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
+	   -0.5f, -0.5f, 1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
+	   -0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
 
 
 	};
@@ -131,25 +130,25 @@ int main()
 
 
 	};
-	//unsigned int texture1;
+	unsigned int texture1;
 	//unsigned int texture2;
-	//glGenTextures(1, &texture1);
+	glGenTextures(1, &texture1);
 	//glGenTextures(1, &texture2);
-	//glBindTexture(GL_TEXTURE_2D, texture1);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//int width, height, nrChannels;
-	//unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
-	//if (data) {
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	//	glGenerateMipmap(GL_TEXTURE_2D);
-	//}
-	//else {
-	//	std::cout << "Failed to load a texture! " << std::endl;
-	//}
-	//stbi_image_free(data);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("C:/Users/denis/Downloads/container2.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load a texture! " << std::endl;
+	}
+	stbi_image_free(data);
 	//glBindTexture(GL_TEXTURE_2D, texture2);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -185,19 +184,20 @@ int main()
 	// GL_DYNAMIC_DRAW - якщо дані будуть змінюватися та будуть часто використовуватися
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	// Кажемо як інтерпретувати наші дані в VBO. Перший аргумент location де він буде розташовуватися. Оскільки в шейдері я беру дані з location 0  то наші вершини повинні знаходитися на location 0
 	// Другий аргумент це кількість компонентів на атрибут 3(x,y,z). 3 - тій це тип даних кожного компонента. 4 чи нормалізувати компонети(-1, 1). 5 - скільки байтів займає один атрибут. 6 - з якого індексу починаються атрибути
 	glEnableVertexAttribArray(0); // дозволяє брати дані з location 0
 	glEnableVertexAttribArray(1);
-	/*glEnableVertexAttribArray(2);*/
+	glEnableVertexAttribArray(2);
     glBindVertexArray(0);
 
 	glBindVertexArray(lightVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 
@@ -242,14 +242,14 @@ int main()
 		shader.setVec3("viewPos", camera.Position);
 		shader.setMatrix4("model", model);
 		// Встановлення матеріалу
-		shader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-		shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-		shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		shader.setVec3("material.specular", 0.7f, 0.6f, 0.6f);
 		shader.setFloat("material.shininess", 32.0f);
+		shader.setInt("material.diffuse", 0);
 		// Встановлення світла
+		glm::vec3 lightColor = glm::vec3(1,1,1);
+		shader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.setVec3("light.position", lightPos);
-		shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", view);
@@ -266,11 +266,13 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);*/
 
 		glBindVertexArray(VAO);
-		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
 	    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
 
 		shaderLight.use();
 		shaderLight.setMatrix4("view", view);
+		shaderLight.setVec3("lightColor", lightColor);
 		shaderLight.setMatrix4("projection", projection);
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);

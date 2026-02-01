@@ -166,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\..\..\Books\container.jpg" />
+    <Image Include="..\..\..\..\Downloads\container2.png" />
     <Image Include="awesomeface.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

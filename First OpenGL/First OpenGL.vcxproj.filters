@@ -55,5 +55,8 @@
     <Image Include="..\..\..\..\..\..\Books\container.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\..\..\Downloads\container2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
