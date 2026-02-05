@@ -130,12 +130,23 @@ int main()
 
 
 	};
+	glm::vec3 cubePositions[] = {
+	  glm::vec3(0.0f,  0.0f,  0.0f),
+	  glm::vec3(2.0f,  5.0f, -15.0f),
+	  glm::vec3(-1.5f, -2.2f, -2.5f),
+	  glm::vec3(-3.8f, -2.0f, -12.3f),
+	  glm::vec3(2.4f, -0.4f, -3.5f),
+	  glm::vec3(-1.7f,  3.0f, -7.5f),
+	  glm::vec3(1.3f, -2.0f, -2.5f),
+	  glm::vec3(1.5f,  2.0f, -2.5f),
+	  glm::vec3(1.5f,  0.2f, -1.5f),
+	  glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 	unsigned int texture1;
 	unsigned int texture2;
 	unsigned int texture3;
 	glGenTextures(1, &texture1);
 	glGenTextures(1, &texture2);
-	glGenTextures(1, &texture3);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -158,7 +169,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	data = NULL;
 	//stbi_set_flip_vertically_on_load(true);
-	data = stbi_load("C:/Users/denis/Downloads/lighting_maps_specular_color.png", &width, &height, &nrChannels, 0);
+	data = stbi_load("C:/Users/denis/source/repos/First OpenGL/First OpenGL/container2_specular.png", &width, &height, &nrChannels, 0);
 	if (data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -169,21 +180,6 @@ int main()
 	}
 	stbi_image_free(data);
 
-	glBindTexture(GL_TEXTURE_2D, texture3);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = NULL;
-	data = stbi_load("C:/Users/denis/Downloads/matrix.jpg", &width, &height, &nrChannels, 0);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load a texture! " << std::endl;
-	}
-	stbi_image_free(data);
 	unsigned int VBO; // Vertex Buffer Object - буфер у памяті відеокарти, після створення буфера змінна буде зберігати ID того буфера
 	unsigned int VAO;
 	unsigned int EBO; // Element Buffer Object - вирішує проблему дублювання вершин щоб не писати одну ту саму вершину два рази
@@ -268,7 +264,7 @@ int main()
 		glm::vec3 lightColor = glm::vec3(1,1,1);
 		shader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 		shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-		shader.setVec3("light.position", lightPos);
+		shader.setVec3("light.direction", lightPos);
 		shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", view);
@@ -289,9 +285,14 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE0 + 1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-		glActiveTexture(GL_TEXTURE0 + 2);
-		glBindTexture(GL_TEXTURE_2D, texture3);
-	    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
+		for (unsigned int i = 0; i < 10; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
+			shader.setMatrix4("model", model);
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0); // 1 - що малювати, 2 - кількість вершин, 3 - тип даних EBO, 4 - з якого індексу в Відеопамяті почати
+		}
 
 		shaderLight.use();
 		shaderLight.setMatrix4("view", view);
@@ -302,8 +303,8 @@ int main()
 		//model = glm::scale(model, glm::vec3(0.2f)); // робимо кубик меншим
 		shaderLight.setMatrix4("model", model);
 		glBindVertexArray(0);
-		glBindVertexArray(lightVAO);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	/*	glBindVertexArray(lightVAO);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);*/
 		//glDrawArrays(GL_TRIANGLES, 0, 36); // 1 - що малювати, 2 - початковий індекс в Vertex Array, 3 - кількість вершин
 		//glBindVertexArray(0); // скидаємо нащ VAO
 		processInput(window);
