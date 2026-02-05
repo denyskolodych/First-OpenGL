@@ -260,11 +260,15 @@ int main()
 		shader.setFloat("material.shininess", 32.0f);
 		shader.setInt("material.diffuse", 0);
 		shader.setInt("material.emission", 2);
+
+		shader.setFloat("light.constant", 1.0f);
+		shader.setFloat("light.linear",0.07f);
+		shader.setFloat("light.quadratic", 0.017f);
 		// Встановлення світла
 		glm::vec3 lightColor = glm::vec3(1,1,1);
 		shader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 		shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-		shader.setVec3("light.direction", lightPos);
+		shader.setVec3("light.position", lightPos);
 		shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", view);
@@ -303,8 +307,8 @@ int main()
 		//model = glm::scale(model, glm::vec3(0.2f)); // робимо кубик меншим
 		shaderLight.setMatrix4("model", model);
 		glBindVertexArray(0);
-	/*	glBindVertexArray(lightVAO);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);*/
+		glBindVertexArray(lightVAO);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		//glDrawArrays(GL_TRIANGLES, 0, 36); // 1 - що малювати, 2 - початковий індекс в Vertex Array, 3 - кількість вершин
 		//glBindVertexArray(0); // скидаємо нащ VAO
 		processInput(window);
